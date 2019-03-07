@@ -1,0 +1,60 @@
+version: '3'
+
+networks:
+  app-tier:
+    driver: bridge
+
+volumes:
+  mongo_data: null
+
+services:
+  nginx:
+    build: ./nginx/
+    links:
+      - keystone
+    networks:
+      - app-tier
+    ports:
+      - "8580:80"
+
+  mongo:
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+    environment:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: root
+    networks:
+      - app-tier
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+     - 8086:8081
+    networks:
+     - app-tier
+    environment:
+       ME_CONFIG_MONGODB_ADMINUSERNAME: root
+       ME_CONFIG_MONGODB_ADMINPASSWORD: root      
+
+  keystone:
+    build:
+      context: ./keystone
+      args:
+        app_env: ${APP_ENV}
+    volumes:
+      - ./keystone/keystone.js:/usr/src/app/keystone.js
+      - ./keystone/models:/usr/src/app/models
+      - ./keystone/routes:/usr/src/app/routes
+      - ./keystone/updates:/usr/src/app/updates
+      - ./keystone/public:/usr/src/app/public
+    ports:
+      - "3009:3000"
+    links:
+      - mongo
+    depends_on:
+      - mongo  
+    networks:
+      - app-tier

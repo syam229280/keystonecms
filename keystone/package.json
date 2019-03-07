@@ -1,0 +1,20 @@
+{
+  "name": "website-template",
+  "version": "1.0.0",
+  "description": "Exposes an API to data populated from the KeystoneJS interface.",
+  "main": "keystone.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "keywords": [
+    "keystone",
+    "api",
+    "backend"
+  ],
+  "author": "Hugo Rodrigues",
+  "license": "ISC",
+  "dependencies": {
+    "keystone": "^4.0.0-beta.5"
+  },
+  "devDependencies": {}
+}
